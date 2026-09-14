@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'models/sensor.dart';
 import 'widgets/sensor_card.dart';
 import 'pages/sensor_detail_page.dart';
+import 'viewmodels/dashboard_view_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,32 +27,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
-  final sensors = [
-    Sensor(
-      id: '1',
-      name: 'Salon',
-      room: 'Living Room',
-      temperature: 22.5,
-      humidity: 45.0,
-      isOnline: true,
-    ),
-    Sensor(
-      id: '2',
-      name: 'Chambre',
-      room: 'Bedroom',
-      temperature: 20.0,
-      humidity: 50.0,
-      isOnline: false,
-    ),
-    Sensor(
-      id: '3',
-      name: 'Cuisine',
-      room: 'Kitchen',
-      temperature: 24.5,
-      humidity: 55.0,
-      isOnline: true,
-    ),
-  ];
+  final viewModel = DashboardViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +38,9 @@ class MyHomePage extends StatelessWidget {
         elevation: 0,
       ),
       body: ListView.builder(
-        itemCount: sensors.length,
+        itemCount: viewModel.sensors.length,
         itemBuilder: (context, index) {
-          final sensor = sensors[index];
+          final sensor = viewModel.sensors[index];
           return GestureDetector(
             onTap: () {
               Navigator.push(
