@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'models/sensor.dart';
 import 'widgets/sensor_card.dart';
 import 'pages/sensor_detail_page.dart';
+import 'pages/statistics_page.dart';
 import 'viewmodels/dashboard_view_model.dart';
 
 void main() {
@@ -36,6 +37,17 @@ class MyHomePage extends StatelessWidget {
         title: const Text('Mes Capteurs'),
         centerTitle: true,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.analytics),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StatisticsPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: viewModel.sensors.length,

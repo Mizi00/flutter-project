@@ -39,4 +39,18 @@ class DashboardViewModel {
 
   // Vrai s'il y a au moins un capteur hors ligne
   bool get hasOfflineSensors => _sensors.any((s) => !s.isOnline);
+
+  // Température moyenne
+  double get averageTemperature =>
+      _sensors.isEmpty
+          ? 0
+          : _sensors.map((s) => s.temperature).reduce((a, b) => a + b) /
+              _sensors.length;
+
+  // Humidité moyenne
+  double get averageHumidity =>
+      _sensors.isEmpty
+          ? 0
+          : _sensors.map((s) => s.humidity).reduce((a, b) => a + b) /
+              _sensors.length;
 }
