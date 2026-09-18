@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:app_test/viewmodels/dashboard_view_model.dart';
 
 class StatisticsPage extends StatelessWidget {
-  const StatisticsPage({super.key});
+  const StatisticsPage({required this.viewModel, super.key});
+
+  final DashboardViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = DashboardViewModel();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistiques'),

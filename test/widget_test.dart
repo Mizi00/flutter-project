@@ -1,30 +1,83 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:app_test/main.dart';
+import 'package:app_test/repositories/fake_sensor_repository.dart';
+import 'package:app_test/viewmodels/dashboard_view_model.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  DashboardViewModel viewModelWith({
+    Duration latency = Duration.zero,
+    bool shouldFail = false,
+  }) {
+    return DashboardViewModel(
+      repository: FakeSensorRepository(
+        latency: latency,
+        shouldFail: shouldFail,
+      ),
+    );
+  }
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('le dashboard affiche les données du Fake Repository', (
+    tester,
+  ) async {
+    final viewModel = viewModelWith();
+    // Sous testWidgets l'horloge est simulée : runAsync donne de vrais
+    // timers, sans quoi le Future.delayed du Fake ne se résout jamais.
+    await tester.runAsync(() => viewModel.load());
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpWidget(MyApp(viewModel: viewModel));
+
+    expect(find.text('Salon'), findsOneWidget);
+    expect(find.text('Chambre'), findsOneWidget);
+    expect(find.text('Cuisine'), findsOneWidget);
+  });
+
+  testWidgets('cliquer un capteur affiche un chargement puis le détail', (
+    tester,
+  ) async {
+    final viewModel = viewModelWith(
+      latency: const Duration(milliseconds: 600),
+    );
+    await tester.runAsync(() => viewModel.load());
+
+    await tester.pumpWidget(MyApp(viewModel: viewModel));
+    await tester.tap(find.text('Salon'));
+    // Une frame lance la transition, la suivante construit la page poussée.
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    // 'multi-sensor' n'existe que sur le Sensor complet, donc il prouve
+    // que fetchById a bien été appelé.
+    expect(find.text('multi-sensor'), findsOneWidget);
+  });
+
+  test('fetchById renvoie tous les attributs du capteur', () async {
+    final sensor = await viewModelWith().fetchSensorById('1');
+
+    expect(sensor.name, 'Salon');
+    expect(sensor.type, 'multi-sensor');
+    expect(sensor.batteryLevel, 87);
+    expect(sensor.lastSeen, isNotNull);
+  });
+
+  test('fetchById échoue pour un id inconnu', () async {
+    await expectLater(
+      viewModelWith().fetchSensorById('inconnu'),
+      throwsException,
+    );
+  });
+
+  test('le Fake déclenche une erreur à la demande', () async {
+    await expectLater(
+      viewModelWith(shouldFail: true).load(),
+      throwsException,
+    );
   });
 }

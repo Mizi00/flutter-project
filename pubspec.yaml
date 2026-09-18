@@ -28,7 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  freezed_annotation: 
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
   flutter:
     sdk: flutter
 
@@ -37,9 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
-  freezed: 
-  json_serializable: 
-  build_runner: 
+  freezed: ^4.0.0
+  json_serializable: ^6.14.0
+  build_runner: ^2.16.0
   flutter_test:
     sdk: flutter
 

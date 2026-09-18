@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 
-import 'models/sensor.dart';
 import 'widgets/sensor_card.dart';
 import 'pages/sensor_detail_page.dart';
 import 'pages/statistics_page.dart';
 import 'viewmodels/dashboard_view_model.dart';
+import 'repositories/fake_sensor_repository.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  final repository = FakeSensorRepository();
+  final viewModel = DashboardViewModel(repository: repository);
+
+  await viewModel.load();
+
+  runApp(MyApp(viewModel: viewModel));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({required this.viewModel, super.key});
+
+  final DashboardViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +28,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: MyHomePage(viewModel: viewModel),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
-  final viewModel = DashboardViewModel();
+  const MyHomePage({required this.viewModel, super.key});
+
+  final DashboardViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +51,9 @@ class MyHomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StatisticsPage()),
+                MaterialPageRoute(
+                  builder: (context) => StatisticsPage(viewModel: viewModel),
+                ),
               );
             },
           ),
@@ -58,7 +68,10 @@ class MyHomePage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SensorDetailPage(sensor: sensor),
+                  builder: (context) => SensorDetailPage(
+                    viewModel: viewModel,
+                    sensorId: sensor.id,
+                  ),
                 ),
               );
             },

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Sensor {
 
- String get id; String get name; String get room; double get temperature; double get humidity; bool get isOnline;
+ String get id; String get name; String get room; double get temperature; double get humidity; bool get isOnline; String get type; int get batteryLevel; DateTime? get lastSeen;
 /// Create a copy of Sensor
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $SensorCopyWith<Sensor> get copyWith => _$SensorCopyWithImpl<Sensor>(this as Sen
 @override
 bool operator ==(Object other) {
   final _this = this as Sensor;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Sensor&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.room, _this.room) || other.room == _this.room)&&(identical(other.temperature, _this.temperature) || other.temperature == _this.temperature)&&(identical(other.humidity, _this.humidity) || other.humidity == _this.humidity)&&(identical(other.isOnline, _this.isOnline) || other.isOnline == _this.isOnline));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Sensor&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.room, _this.room) || other.room == _this.room)&&(identical(other.temperature, _this.temperature) || other.temperature == _this.temperature)&&(identical(other.humidity, _this.humidity) || other.humidity == _this.humidity)&&(identical(other.isOnline, _this.isOnline) || other.isOnline == _this.isOnline)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.batteryLevel, _this.batteryLevel) || other.batteryLevel == _this.batteryLevel)&&(identical(other.lastSeen, _this.lastSeen) || other.lastSeen == _this.lastSeen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Sensor;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.room,_this.temperature,_this.humidity,_this.isOnline);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.room,_this.temperature,_this.humidity,_this.isOnline,_this.type,_this.batteryLevel,_this.lastSeen);
 }
 
 @override
 String toString() {
   final _this = this as Sensor;
-  return 'Sensor(id: ${_this.id}, name: ${_this.name}, room: ${_this.room}, temperature: ${_this.temperature}, humidity: ${_this.humidity}, isOnline: ${_this.isOnline})';
+  return 'Sensor(id: ${_this.id}, name: ${_this.name}, room: ${_this.room}, temperature: ${_this.temperature}, humidity: ${_this.humidity}, isOnline: ${_this.isOnline}, type: ${_this.type}, batteryLevel: ${_this.batteryLevel}, lastSeen: ${_this.lastSeen})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $SensorCopyWith<$Res>  {
   factory $SensorCopyWith(Sensor value, $Res Function(Sensor) _then) = _$SensorCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String room, double temperature, double humidity, bool isOnline
+ String id, String name, String room, double temperature, double humidity, bool isOnline, String type, int batteryLevel, DateTime? lastSeen
 });
 
 
@@ -71,7 +71,7 @@ class _$SensorCopyWithImpl<$Res>
 
 /// Create a copy of Sensor
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? room = null,Object? temperature = null,Object? humidity = null,Object? isOnline = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? room = null,Object? temperature = null,Object? humidity = null,Object? isOnline = null,Object? type = null,Object? batteryLevel = null,Object? lastSeen = freezed,}) {
   return _then(Sensor(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -79,7 +79,10 @@ as String,room: null == room ? _self.room : room // ignore: cast_nullable_to_non
 as String,temperature: null == temperature ? _self.temperature : temperature // ignore: cast_nullable_to_non_nullable
 as double,humidity: null == humidity ? _self.humidity : humidity // ignore: cast_nullable_to_non_nullable
 as double,isOnline: null == isOnline ? _self.isOnline : isOnline // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,lastSeen: freezed == lastSeen ? _self.lastSeen : lastSeen // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -164,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline,  String type,  int batteryLevel,  DateTime? lastSeen)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Sensor() when $default != null:
-return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline);case _:
+return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline,_that.type,_that.batteryLevel,_that.lastSeen);case _:
   return orElse();
 
 }
@@ -185,10 +188,10 @@ return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline,  String type,  int batteryLevel,  DateTime? lastSeen)  $default,) {final _that = this;
 switch (_that) {
 case _Sensor():
-return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline);case _:
+return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline,_that.type,_that.batteryLevel,_that.lastSeen);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +208,10 @@ return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String room,  double temperature,  double humidity,  bool isOnline,  String type,  int batteryLevel,  DateTime? lastSeen)?  $default,) {final _that = this;
 switch (_that) {
 case _Sensor() when $default != null:
-return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline);case _:
+return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,_that.isOnline,_that.type,_that.batteryLevel,_that.lastSeen);case _:
   return null;
 
 }
@@ -220,7 +223,7 @@ return $default(_that.id,_that.name,_that.room,_that.temperature,_that.humidity,
 @JsonSerializable()
 
 class _Sensor implements Sensor {
-  const _Sensor({required this.id, required this.name, required this.room, required this.temperature, required this.humidity, this.isOnline = false});
+  const _Sensor({required this.id, required this.name, required this.room, required this.temperature, required this.humidity, this.isOnline = false, this.type = 'multi-sensor', this.batteryLevel = 100, this.lastSeen});
   factory _Sensor.fromJson(Map<String, dynamic> json) => _$SensorFromJson(json);
 
 @override final  String id;
@@ -229,6 +232,9 @@ class _Sensor implements Sensor {
 @override final  double temperature;
 @override final  double humidity;
 @override@JsonKey() final  bool isOnline;
+@override@JsonKey() final  String type;
+@override@JsonKey() final  int batteryLevel;
+@override final  DateTime? lastSeen;
 
 /// Create a copy of Sensor
 /// with the given fields replaced by the non-null parameter values.
@@ -243,18 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Sensor&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.room, room) || other.room == room)&&(identical(other.temperature, temperature) || other.temperature == temperature)&&(identical(other.humidity, humidity) || other.humidity == humidity)&&(identical(other.isOnline, isOnline) || other.isOnline == isOnline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Sensor&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.room, room) || other.room == room)&&(identical(other.temperature, temperature) || other.temperature == temperature)&&(identical(other.humidity, humidity) || other.humidity == humidity)&&(identical(other.isOnline, isOnline) || other.isOnline == isOnline)&&(identical(other.type, type) || other.type == type)&&(identical(other.batteryLevel, batteryLevel) || other.batteryLevel == batteryLevel)&&(identical(other.lastSeen, lastSeen) || other.lastSeen == lastSeen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,room,temperature,humidity,isOnline);
+    return Object.hash(runtimeType,id,name,room,temperature,humidity,isOnline,type,batteryLevel,lastSeen);
 }
 
 @override
 String toString() {
-    return 'Sensor(id: $id, name: $name, room: $room, temperature: $temperature, humidity: $humidity, isOnline: $isOnline)';
+    return 'Sensor(id: $id, name: $name, room: $room, temperature: $temperature, humidity: $humidity, isOnline: $isOnline, type: $type, batteryLevel: $batteryLevel, lastSeen: $lastSeen)';
 }
 
 
@@ -265,7 +271,7 @@ abstract mixin class _$SensorCopyWith<$Res> implements $SensorCopyWith<$Res> {
   factory _$SensorCopyWith(_Sensor value, $Res Function(_Sensor) _then) = __$SensorCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String room, double temperature, double humidity, bool isOnline
+ String id, String name, String room, double temperature, double humidity, bool isOnline, String type, int batteryLevel, DateTime? lastSeen
 });
 
 
@@ -282,7 +288,7 @@ class __$SensorCopyWithImpl<$Res>
 
 /// Create a copy of Sensor
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? room = null,Object? temperature = null,Object? humidity = null,Object? isOnline = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? room = null,Object? temperature = null,Object? humidity = null,Object? isOnline = null,Object? type = null,Object? batteryLevel = null,Object? lastSeen = freezed,}) {
   return _then(_Sensor(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -290,7 +296,10 @@ as String,room: null == room ? _self.room : room // ignore: cast_nullable_to_non
 as String,temperature: null == temperature ? _self.temperature : temperature // ignore: cast_nullable_to_non_nullable
 as double,humidity: null == humidity ? _self.humidity : humidity // ignore: cast_nullable_to_non_nullable
 as double,isOnline: null == isOnline ? _self.isOnline : isOnline // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,batteryLevel: null == batteryLevel ? _self.batteryLevel : batteryLevel // ignore: cast_nullable_to_non_nullable
+as int,lastSeen: freezed == lastSeen ? _self.lastSeen : lastSeen // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

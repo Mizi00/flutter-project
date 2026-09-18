@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app_test/models/sensor.dart';
+import 'package:app_test/models/sensor_summary.dart';
 
 class SensorCard extends StatelessWidget {
-  final Sensor sensor;
+  final SensorSummary sensor;
 
   const SensorCard({required this.sensor});
 

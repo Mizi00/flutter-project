@@ -1,35 +1,25 @@
 import 'package:app_test/models/sensor.dart';
+import 'package:app_test/models/sensor_summary.dart';
+
+import '../repositories/sensor_repository.dart';
 
 class DashboardViewModel {
-  final List<Sensor> _sensors = [
-    Sensor(
-      id: '1',
-      name: 'Salon',
-      room: 'Living Room',
-      temperature: 22.5,
-      humidity: 45.0,
-      isOnline: true,
-    ),
-    Sensor(
-      id: '2',
-      name: 'Chambre',
-      room: 'Bedroom',
-      temperature: 20.0,
-      humidity: 50.0,
-      isOnline: false,
-    ),
-    Sensor(
-      id: '3',
-      name: 'Cuisine',
-      room: 'Kitchen',
-      temperature: 24.5,
-      humidity: 55.0,
-      isOnline: true,
-    ),
-  ];
+  DashboardViewModel({required SensorRepository repository})
+      : _repository = repository;
+
+  final SensorRepository _repository;
+
+  List<SensorSummary> _sensors = [];
 
   // Getter pour accéder à la liste (lecture seule)
-  List<Sensor> get sensors => _sensors;
+  List<SensorSummary> get sensors => List.unmodifiable(_sensors);
+
+  Future<void> load() async {
+    _sensors = await _repository.fetchAll();
+  }
+
+  // Tous les attributs d'un capteur, chargés à la demande depuis son id
+  Future<Sensor> fetchSensorById(String id) => _repository.fetchById(id);
 
   // Nombre total de capteurs
   int get sensorCount => _sensors.length;
