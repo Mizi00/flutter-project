@@ -20,7 +20,7 @@ class StatisticsPage extends StatelessWidget {
           children: [
             Text('Total capteurs: ${viewModel.sensorCount}'),
             Text('En ligne: ${viewModel.onlineCount}'),
-            Text('Hors ligne: ${viewModel.sensors.length - viewModel.onlineCount}'),
+            Text('Hors ligne: ${viewModel.offlineCount}'),
             Text('Température moyenne: ${viewModel.averageTemperature.toStringAsFixed(1)}°C'),
             Text('Humidité moyenne: ${viewModel.averageHumidity.toStringAsFixed(1)}%'),
           ],

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:app_test/main.dart';
+import 'package:app_test/models/sensor_summary.dart';
 import 'package:app_test/repositories/fake_sensor_repository.dart';
+import 'package:app_test/viewmodels/async_state.dart';
 import 'package:app_test/viewmodels/dashboard_view_model.dart';
 
 void main() {
@@ -74,10 +76,59 @@ void main() {
     );
   });
 
-  test('le Fake déclenche une erreur à la demande', () async {
-    await expectLater(
-      viewModelWith(shouldFail: true).load(),
-      throwsException,
-    );
-  });
+  test(
+    'un listener observe Loading puis Content, sans Provider ni widget',
+    () async {
+      final viewModel = viewModelWith();
+      final observed = <AsyncState<SensorSummary>>[];
+
+      expect(viewModel.state, isA<Loading<SensorSummary>>());
+      viewModel.addListener(() => observed.add(viewModel.state));
+
+      await viewModel.load();
+
+      expect(observed.first, isA<Loading<SensorSummary>>());
+      expect(observed.last, isA<Content<SensorSummary>>());
+      expect(
+        (observed.last as Content<SensorSummary>).values,
+        hasLength(10),
+      );
+    },
+  );
+
+  testWidgets(
+    'le dashboard affiche le spinner puis le contenu, comme dans main()',
+    (tester) async {
+      final viewModel = viewModelWith(
+        latency: const Duration(milliseconds: 800),
+      );
+
+      // Reproduit exactement le flux de main() : load() lancé sans être
+      // attendu, puis construction du widget pendant que ça charge.
+      viewModel.load();
+      await tester.pumpWidget(MyApp(viewModel: viewModel));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 900));
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Salon'), findsOneWidget);
+    },
+  );
+
+  test(
+    'un listener observe Failure quand le repository échoue',
+    () async {
+      final viewModel = viewModelWith(shouldFail: true);
+      final observed = <AsyncState<SensorSummary>>[];
+
+      viewModel.addListener(() => observed.add(viewModel.state));
+
+      // load() ne relance plus l'erreur : elle devient un état publié.
+      await viewModel.load();
+
+      expect(observed.last, isA<Failure<SensorSummary>>());
+    },
+  );
 }
