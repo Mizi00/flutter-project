@@ -9,10 +9,7 @@ class StatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistiques'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Statistiques'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -21,8 +18,12 @@ class StatisticsPage extends StatelessWidget {
             Text('Total capteurs: ${viewModel.sensorCount}'),
             Text('En ligne: ${viewModel.onlineCount}'),
             Text('Hors ligne: ${viewModel.offlineCount}'),
-            Text('Température moyenne: ${viewModel.averageTemperature.toStringAsFixed(1)}°C'),
-            Text('Humidité moyenne: ${viewModel.averageHumidity.toStringAsFixed(1)}%'),
+            Text(
+              'Température moyenne: ${viewModel.averageTemperature.toStringAsFixed(1)}°C',
+            ),
+            Text(
+              'Humidité moyenne: ${viewModel.averageHumidity.toStringAsFixed(1)}%',
+            ),
           ],
         ),
       ),

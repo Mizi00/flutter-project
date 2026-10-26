@@ -38,9 +38,7 @@ void main() {
   testWidgets('cliquer un capteur affiche un chargement puis le détail', (
     tester,
   ) async {
-    final viewModel = viewModelWith(
-      latency: const Duration(milliseconds: 600),
-    );
+    final viewModel = viewModelWith(latency: const Duration(milliseconds: 600));
     await tester.runAsync(() => viewModel.load());
 
     await tester.pumpWidget(MyApp(viewModel: viewModel));
@@ -89,10 +87,7 @@ void main() {
 
       expect(observed.first, isA<Loading<SensorSummary>>());
       expect(observed.last, isA<Content<SensorSummary>>());
-      expect(
-        (observed.last as Content<SensorSummary>).values,
-        hasLength(10),
-      );
+      expect((observed.last as Content<SensorSummary>).values, hasLength(10));
     },
   );
 
@@ -117,18 +112,101 @@ void main() {
     },
   );
 
-  test(
-    'un listener observe Failure quand le repository échoue',
-    () async {
-      final viewModel = viewModelWith(shouldFail: true);
-      final observed = <AsyncState<SensorSummary>>[];
+  test('un listener observe Failure quand le repository échoue', () async {
+    final viewModel = viewModelWith(shouldFail: true);
+    final observed = <AsyncState<SensorSummary>>[];
 
-      viewModel.addListener(() => observed.add(viewModel.state));
+    viewModel.addListener(() => observed.add(viewModel.state));
 
-      // load() ne relance plus l'erreur : elle devient un état publié.
-      await viewModel.load();
+    // load() ne relance plus l'erreur : elle devient un état publié.
+    await viewModel.load();
 
-      expect(observed.last, isA<Failure<SensorSummary>>());
-    },
-  );
+    expect(observed.last, isA<Failure<SensorSummary>>());
+  });
+
+  test('échec puis nouvelle tentative avec la même instance', () async {
+    final repository = FakeSensorRepository(
+      latency: Duration.zero,
+      failFirstLoads: 1,
+    );
+    final viewModel = DashboardViewModel(repository: repository);
+
+    await viewModel.load();
+    expect(viewModel.state, isA<Failure<SensorSummary>>());
+
+    await viewModel.load();
+    expect(viewModel.state, isA<Content<SensorSummary>>());
+    expect(repository.loadCount, 2);
+  });
+
+  test('des load() rapides ne lancent qu\'un seul chargement', () async {
+    final repository = FakeSensorRepository(
+      latency: const Duration(milliseconds: 50),
+    );
+    final viewModel = DashboardViewModel(repository: repository);
+
+    await Future.wait([viewModel.load(), viewModel.load(), viewModel.load()]);
+    expect(repository.loadCount, 1);
+
+    // Terminé : une nouvelle actualisation redevient possible.
+    await viewModel.load();
+    expect(repository.loadCount, 2);
+  });
+
+  test('la dernière réussite survit à une erreur', () async {
+    var now = DateTime(2026, 1, 1, 10, 0, 0);
+    final viewModel = DashboardViewModel(
+      repository: FakeSensorRepository(
+        latency: Duration.zero,
+        sensors: const [],
+      ),
+      clock: () => now,
+    );
+    expect(viewModel.lastRefreshLabel, 'Aucune actualisation réussie');
+
+    await viewModel.load();
+    expect(viewModel.lastRefreshLabel, 'Dernière actualisation : 10:00:00');
+
+    final failing = DashboardViewModel(
+      repository: FakeSensorRepository(
+        latency: Duration.zero,
+        failFirstLoads: 1,
+      ),
+      clock: () => now,
+    );
+    await failing.load();
+    expect(failing.lastRefreshLabel, 'Aucune actualisation réussie');
+    now = DateTime(2026, 1, 1, 10, 5, 0);
+    await failing.load();
+    expect(failing.lastRefreshLabel, 'Dernière actualisation : 10:05:00');
+  });
+
+  test('une erreur après un succès conserve l\'heure du succès', () async {
+    var now = DateTime(2026, 1, 1, 10, 0, 0);
+    final repository = _FlakyRepository();
+    final viewModel = DashboardViewModel(
+      repository: repository,
+      clock: () => now,
+    );
+
+    await viewModel.load();
+    now = DateTime(2026, 1, 1, 10, 9, 0);
+    repository.fail = true;
+    await viewModel.load();
+
+    expect(viewModel.state, isA<Failure<SensorSummary>>());
+    expect(viewModel.lastRefreshLabel, 'Dernière actualisation : 10:00:00');
+  });
+}
+
+class _FlakyRepository extends FakeSensorRepository {
+  _FlakyRepository() : super(latency: Duration.zero);
+
+  bool fail = false;
+
+  @override
+  Future<List<SensorSummary>> fetchAll() async {
+    if (fail) throw Exception('panne');
+    return super.fetchAll();
+  }
 }

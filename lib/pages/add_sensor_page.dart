@@ -22,10 +22,12 @@ class _AddSensorPageState extends State<AddSensorPage> {
     super.initState();
     _nameController = TextEditingController(text: widget.sensor?.name ?? '');
     _roomController = TextEditingController(text: widget.sensor?.room ?? '');
-    _temperatureController =
-        TextEditingController(text: widget.sensor?.temperature.toString() ?? '');
-    _humidityController =
-        TextEditingController(text: widget.sensor?.humidity.toString() ?? '');
+    _temperatureController = TextEditingController(
+      text: widget.sensor?.temperature.toString() ?? '',
+    );
+    _humidityController = TextEditingController(
+      text: widget.sensor?.humidity.toString() ?? '',
+    );
     _isOnline = widget.sensor?.isOnline ?? true;
   }
 
@@ -120,9 +122,7 @@ class _AddSensorPageState extends State<AddSensorPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

@@ -74,9 +74,7 @@ class _SensorDetailPageState extends State<SensorDetailPage> {
               ? theme.colorScheme.primaryContainer
               : theme.colorScheme.errorContainer,
           child: ListTile(
-            leading: Icon(
-              sensor.isOnline ? Icons.cloud_done : Icons.cloud_off,
-            ),
+            leading: Icon(sensor.isOnline ? Icons.cloud_done : Icons.cloud_off),
             title: Text(sensor.isOnline ? 'En ligne' : 'Hors ligne'),
             subtitle: Text('Vu le ${_formatDate(sensor.lastSeen)}'),
           ),
@@ -90,9 +88,7 @@ class _SensorDetailPageState extends State<SensorDetailPage> {
           'Température': '${sensor.temperature} °C',
           'Humidité': '${sensor.humidity} %',
         }),
-        _group(theme, 'Appareil', {
-          'Batterie': '${sensor.batteryLevel} %',
-        }),
+        _group(theme, 'Appareil', {'Batterie': '${sensor.batteryLevel} %'}),
       ],
     );
   }

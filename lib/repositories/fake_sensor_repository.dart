@@ -3,21 +3,32 @@ import '../models/sensor_summary.dart';
 import 'sensor_repository.dart';
 
 class FakeSensorRepository implements SensorRepository {
-  const FakeSensorRepository({
+  FakeSensorRepository({
     this.latency = const Duration(milliseconds: 800),
     this.shouldFail = false,
+    this.failFirstLoads = 0,
     this.sensors,
   });
 
   final Duration latency;
   final bool shouldFail;
+
+  /// Nombre de premiers chargements de la liste qui échouent, puis réussissent.
+  final int failFirstLoads;
   final List<Sensor>? sensors;
+
+  int _loadCount = 0;
+
+  /// Chargements de la liste réellement exécutés (observation uniquement).
+  int get loadCount => _loadCount;
 
   @override
   Future<List<SensorSummary>> fetchAll() async {
+    _loadCount++;
+    final attempt = _loadCount;
     await Future.delayed(latency);
 
-    if (shouldFail) {
+    if (shouldFail || attempt <= failFirstLoads) {
       throw Exception('Impossible de récupérer les capteurs');
     }
 
